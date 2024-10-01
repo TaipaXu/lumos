@@ -50,6 +50,10 @@ Analyzer *Analyzer::create(const std::string &fileName)
     {
         return new TypeScriptAnalyzer();
     }
+    else if (fileName.ends_with(".vue"))
+    {
+        return new VueAnalyzer();
+    }
     else if (fileName.ends_with(".json"))
     {
         return new JsonAnalyzer();
@@ -88,12 +92,12 @@ Model::CodeStats Analyzer::start(std::string &path) const
 
     while (std::getline(file, line))
     {
-        stats.totalLines++;
+        stats.totalLineCount++;
         std::string trimmed = boost::algorithm::trim_copy(line);
 
         if (trimmed.empty())
         {
-            stats.emptyLines++;
+            stats.emptyLineCount++;
         }
         else
         {
@@ -101,7 +105,7 @@ Model::CodeStats Analyzer::start(std::string &path) const
             {
                 if (inBlockComment)
                 {
-                    stats.commentLines++;
+                    stats.commentLineCount++;
 
                     if (isMultiLineCommentEnd(trimmed, lastMultiLineCommentStart))
                     {
@@ -113,24 +117,24 @@ Model::CodeStats Analyzer::start(std::string &path) const
                 {
                     if (isMulitLineCommentInOneLine(trimmed))
                     {
-                        stats.commentLines++;
+                        stats.commentLineCount++;
                     }
                     else
                     {
                         if (isMultiLineCommentStart(trimmed, lastMultiLineCommentStart))
                         {
-                            stats.commentLines++;
+                            stats.commentLineCount++;
                             inBlockComment = true;
                         }
                         else
                         {
                             if (isSingleLineComment(trimmed))
                             {
-                                stats.commentLines++;
+                                stats.commentLineCount++;
                             }
                             else
                             {
-                                stats.codeLines++;
+                                stats.codeLineCount++;
                             }
                         }
                     }
@@ -140,11 +144,11 @@ Model::CodeStats Analyzer::start(std::string &path) const
             {
                 if (isSingleLineComment(trimmed))
                 {
-                    stats.commentLines++;
+                    stats.commentLineCount++;
                 }
                 else
                 {
-                    stats.codeLines++;
+                    stats.codeLineCount++;
                 }
             }
         }
@@ -155,7 +159,7 @@ Model::CodeStats Analyzer::start(std::string &path) const
 
 bool Analyzer::isSingleLineComment(const std::string &line) const
 {
-    for (const std::string &symbol : singleLineCommentSymbols)
+    for (const auto &symbol : singleLineCommentSymbols)
     {
         if (line.starts_with(symbol))
         {
@@ -167,7 +171,7 @@ bool Analyzer::isSingleLineComment(const std::string &line) const
 
 bool Analyzer::isMultiLineCommentStart(const std::string &line, std::string &multilineCommentStart) const
 {
-    for (const MultiLineComment &symbol : multiLineCommentSymbols)
+    for (const auto &symbol : multiLineCommentSymbols)
     {
         if (line.starts_with(symbol.start))
         {
@@ -190,7 +194,7 @@ bool Analyzer::isMultiLineCommentEnd(const std::string &line, const std::string 
 
 bool Analyzer::isMulitLineCommentInOneLine(const std::string &line) const
 {
-    for (const MultiLineComment &symbol : multiLineCommentSymbols)
+    for (const auto &symbol : multiLineCommentSymbols)
     {
         if (line.find(symbol.start) != std::string::npos && line.find(symbol.end) != std::string::npos && line.find(symbol.start) < line.find(symbol.end))
         {

@@ -16,10 +16,15 @@ set(SOURCES
     models/result.hpp
     models/result.cpp
 
-    analyseManager.hpp
-    analyseManager.cpp
-    analyzer.hpp
-    analyzer.cpp
+    analysis/analyseManager.hpp
+    analysis/analyseManager.cpp
+    analysis/analyzer.hpp
+    analysis/analyzer.cpp
+    analysis/analyzers.hpp
+
+    threadSafeQueue.hpp
+    magicWrapper.hpp
+    magicWrapper.cpp
 )
 add_executable(${TARGET} ${SOURCES})
 

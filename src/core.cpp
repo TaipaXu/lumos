@@ -1,33 +1,29 @@
 #include "./core.hpp"
-
 #include <iostream>
 #include <filesystem>
-#include <fstream>
+#include <thread>
 #include <chrono>
-#include <magic.h>
-#include "./analyzer.hpp"
+#include "./threadSafeQueue.hpp"
+#include "./magicWrapper.hpp"
+#include "analysis/analyzer.hpp"
 
 void Core::start(const std::vector<std::string> &paths)
 {
-    const auto startTime = std::chrono::high_resolution_clock::now();
+    auto startTime = std::chrono::high_resolution_clock::now();
 
-    int count = 0;
-    for (const std::string &path : paths)
+    std::vector<std::string> collectedPaths;
+    for (const auto &path : paths)
     {
         std::filesystem::path fsPath(path);
 
         if (!std::filesystem::exists(fsPath))
         {
-            return;
+            continue;
         }
 
         if (std::filesystem::is_regular_file(fsPath))
         {
-            if (!isBinaryFile(path))
-            {
-                count++;
-                precessFile(path);
-            }
+            collectedPaths.push_back(path);
         }
         else if (std::filesystem::is_directory(fsPath))
         {
@@ -35,65 +31,104 @@ void Core::start(const std::vector<std::string> &paths)
             {
                 if (std::filesystem::is_regular_file(entry.path()))
                 {
-                    if (!isBinaryFile(entry.path()))
-                    {
-                        count++;
-                        precessFile(entry.path());
-                    }
+                    collectedPaths.push_back(entry.path().string());
                 }
             }
         }
     }
+    std::cout << "Total files found: " << collectedPaths.size() << std::endl;
 
-    std::cout << "Total files found: " << count << std::endl;
+    unsigned int threadCount = std::thread::hardware_concurrency();
+    if (threadCount == 0)
+    {
+        threadCount = 4;
+    }
 
-    const auto endTime = std::chrono::high_resolution_clock::now();
-    const auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(endTime - startTime);
+    ThreadSafeQueue<std::string> fileQueue;
+    std::vector<std::thread> workers;
+    std::vector<Model::CodeStats> threadStats(threadCount);
+
+    for (const auto &filePath : collectedPaths)
+    {
+        fileQueue.push(filePath);
+    }
+    fileQueue.close();
+
+    for (unsigned int i = 0; i < threadCount; ++i)
+    {
+        workers.emplace_back([&fileQueue, &threadStats, i, this]() {
+            while (true)
+            {
+                auto optFilePath = fileQueue.pop();
+                if (!optFilePath)
+                {
+                    break;
+                }
+
+                std::string filePath = std::move(*optFilePath);
+
+                if (!isBinaryFile(filePath))
+                {
+                    Model::CodeStats stats = processFile(filePath);
+                    threadStats[i] += stats;
+                }
+            }
+        });
+    }
+
+    for (auto &worker : workers)
+    {
+        worker.join();
+    }
+
+    Model::CodeStats totalStats;
+    for (const auto &stats : threadStats)
+    {
+        totalStats += stats;
+    }
+
+    auto endTime = std::chrono::high_resolution_clock::now();
+    auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(endTime - startTime);
     std::cout << "Function execution time: " << duration.count() << " milliseconds" << std::endl;
 
-    std::cout << "Total lines: " << totalStats.totalLines << std::endl;
-    std::cout << "Code lines: " << totalStats.codeLines << std::endl;
-    std::cout << "Comment lines: " << totalStats.commentLines << std::endl;
-    std::cout << "Empty lines: " << totalStats.emptyLines << std::endl;
+    std::cout << "Total lines: " << totalStats.totalLineCount << std::endl;
+    std::cout << "Code lines: " << totalStats.codeLineCount << std::endl;
+    std::cout << "Comment lines: " << totalStats.commentLineCount << std::endl;
+    std::cout << "Empty lines: " << totalStats.emptyLineCount << std::endl;
 }
 
-void Core::precessFile(std::string path)
+Model::CodeStats Core::processFile(std::string path) const
 {
     Analyzer *analyzer = Analyzer::create(path);
+    Model::CodeStats stats;
     if (analyzer)
     {
-        totalStats += analyzer->start(path);
+        stats += analyzer->start(path);
         delete analyzer;
     }
+    return stats;
 }
 
 bool Core::isBinaryFile(const std::string &path) const
 {
-    magic_t magicCookie = magic_open(MAGIC_MIME_TYPE);
-    if (magicCookie == nullptr)
+    try
     {
-        // std::cerr << "Unable to initialize magic library" << std::endl;
+        thread_local MagicWrapper magicWrapper;
+
+        const char *mime_type = magic_file(magicWrapper.getMagicCookie(), path.c_str());
+        if (mime_type == nullptr)
+        {
+            std::cerr << "Cannot determine MIME type: " << magic_error(magicWrapper.getMagicCookie()) << std::endl;
+            return false;
+        }
+
+        bool isBinary = (std::string(mime_type).find("text") == std::string::npos);
+
+        return isBinary;
+    }
+    catch (const std::exception &e)
+    {
+        std::cerr << "Error: " << e.what() << std::endl;
         return false;
     }
-
-    if (magic_load(magicCookie, "/usr/share/file/magic.mgc") != 0)
-    {
-        // std::cerr << "Cannot load magic database: " << magic_error(magicCookie) << std::endl;
-        magic_close(magicCookie);
-        return false;
-    }
-
-    const char *mime_type = magic_file(magicCookie, path.c_str());
-    if (mime_type == nullptr)
-    {
-        // std::cerr << "Cannot determine MIME type: " << magic_error(magicCookie) << std::endl;
-        magic_close(magicCookie);
-        return false;
-    }
-
-    bool isBinary = (std::string(mime_type).find("text") == std::string::npos);
-
-    magic_close(magicCookie);
-
-    return isBinary;
 }

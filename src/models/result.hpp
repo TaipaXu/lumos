@@ -4,27 +4,27 @@ namespace Model
 {
     struct CodeStats
     {
-        int totalLines = 0;
-        int codeLines = 0;
-        int commentLines = 0;
-        int emptyLines = 0;
+        int totalLineCount = 0;
+        int codeLineCount = 0;
+        int commentLineCount = 0;
+        int emptyLineCount = 0;
 
         CodeStats operator+(const CodeStats &other) const
         {
             CodeStats result;
-            result.totalLines = this->totalLines + other.totalLines;
-            result.codeLines = this->codeLines + other.codeLines;
-            result.commentLines = this->commentLines + other.commentLines;
-            result.emptyLines = this->emptyLines + other.emptyLines;
+            result.totalLineCount = this->totalLineCount + other.totalLineCount;
+            result.codeLineCount = this->codeLineCount + other.codeLineCount;
+            result.commentLineCount = this->commentLineCount + other.commentLineCount;
+            result.emptyLineCount = this->emptyLineCount + other.emptyLineCount;
             return result;
         }
 
         CodeStats &operator+=(const CodeStats &other)
         {
-            this->totalLines += other.totalLines;
-            this->codeLines += other.codeLines;
-            this->commentLines += other.commentLines;
-            this->emptyLines += other.emptyLines;
+            this->totalLineCount += other.totalLineCount;
+            this->codeLineCount += other.codeLineCount;
+            this->commentLineCount += other.commentLineCount;
+            this->emptyLineCount += other.emptyLineCount;
             return *this;
         }
     };

@@ -13,9 +13,6 @@ public:
     void start(const std::vector<std::string> &paths);
 
 private:
-    void precessFile(std::string path);
+    Model::CodeStats processFile(std::string path) const;
     bool isBinaryFile(const std::string &path) const;
-
-private:
-    Model::CodeStats totalStats;
 };
