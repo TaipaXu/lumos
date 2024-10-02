@@ -5,6 +5,12 @@
 #include <boost/algorithm/string.hpp>
 #include "./analyzers.hpp"
 
+#define CREATE_ANALYZER_CHECK(extension, analyzer) \
+    if (fileName.ends_with("." #extension))        \
+    {                                              \
+        return new analyzer##Analyzer();           \
+    }
+
 Analyzer::Analyzer(const std::vector<std::string> &singleLineCommentSymbols, const std::vector<MultiLineComment> &multiLineCommentSymbols)
     : singleLineCommentSymbols{singleLineCommentSymbols},
       multiLineCommentSymbols{multiLineCommentSymbols},
@@ -14,70 +20,175 @@ Analyzer::Analyzer(const std::vector<std::string> &singleLineCommentSymbols, con
 
 Analyzer *Analyzer::create(const std::string &fileName)
 {
-    if (fileName.ends_with(".h") || fileName.ends_with(".hpp") || fileName.ends_with(".hxx") || fileName.ends_with(".hh") || fileName.ends_with(".cpp") || fileName.ends_with(".cc") || fileName.ends_with(".cxx") || fileName.ends_with(".c") || fileName.ends_with(".C") || fileName.ends_with(".c++") || fileName.ends_with(".inl") || fileName.ends_with(".ipp") || fileName.ends_with(".tpp") || fileName.ends_with(".txx") || fileName.ends_with(".cppm"))
-    {
-        return new CppAnalyzer();
-    }
-    else if (fileName.ends_with(".py"))
-    {
-        return new PythonAnalyzer();
-    }
-    else if (fileName.ends_with(".xml") || fileName.ends_with(".htm"))
-    {
-        return new XMLAnalyzer();
-    }
-    else if (fileName.ends_with(".html") || fileName.ends_with(".htm"))
-    {
-        return new HtmlAnalyzer();
-    }
-    else if (fileName.ends_with(".css"))
-    {
-        return new CssAnalyzer();
-    }
-    else if (fileName.ends_with(".sass") || fileName.ends_with(".scss"))
-    {
-        return new SassAnalyzer();
-    }
-    else if (fileName.ends_with(".less"))
-    {
-        return new LessAnalyzer();
-    }
-    else if (fileName.ends_with(".js"))
-    {
-        return new JavaScriptAnalyzer();
-    }
-    else if (fileName.ends_with(".ts"))
-    {
-        return new TypeScriptAnalyzer();
-    }
-    else if (fileName.ends_with(".vue"))
-    {
-        return new VueAnalyzer();
-    }
-    else if (fileName.ends_with(".json"))
-    {
-        return new JsonAnalyzer();
-    }
-    else if (fileName.ends_with(".md"))
-    {
-        return new MarkdownAnalyzer();
-    }
-    else if (fileName.ends_with(".java"))
-    {
-        return new JavaAnalyzer();
-    }
-    else if (fileName.ends_with(".kt"))
-    {
-        return new KotlinAnalyzer();
-    }
-    else if (fileName.ends_with(".dart"))
-    {
-        return new DartAnalyzer();
-    }
-    else if (fileName.ends_with(".yaml") || fileName.ends_with(".yml"))
-    {
-        return new YamlAnalyzer();
-    }
+    // Ada
+    CREATE_ANALYZER_CHECK(adb, Ada)
+    CREATE_ANALYZER_CHECK(ads, Ada)
+
+    // Bash
+    CREATE_ANALYZER_CHECK(sh, Bash)
+
+    // Assembly
+    CREATE_ANALYZER_CHECK(asm, Assembly)
+    CREATE_ANALYZER_CHECK(s, Assembly)
+
+    // Batch
+    CREATE_ANALYZER_CHECK(bat, Batch)
+    CREATE_ANALYZER_CHECK(cmd, Batch)
+
+    // C / C++
+    CREATE_ANALYZER_CHECK(h, Cpp)
+    CREATE_ANALYZER_CHECK(hpp, Cpp)
+    CREATE_ANALYZER_CHECK(hxx, Cpp)
+    CREATE_ANALYZER_CHECK(hh, Cpp)
+    CREATE_ANALYZER_CHECK(cpp, Cpp)
+    CREATE_ANALYZER_CHECK(cc, Cpp)
+    CREATE_ANALYZER_CHECK(cxx, Cpp)
+    CREATE_ANALYZER_CHECK(c, Cpp)
+    CREATE_ANALYZER_CHECK(C, Cpp)
+    CREATE_ANALYZER_CHECK(c++, Cpp)
+    CREATE_ANALYZER_CHECK(inl, Cpp)
+    CREATE_ANALYZER_CHECK(ipp, Cpp)
+    CREATE_ANALYZER_CHECK(tpp, Cpp)
+    CREATE_ANALYZER_CHECK(txx, Cpp)
+    CREATE_ANALYZER_CHECK(cppm, Cpp)
+
+    // C#
+    CREATE_ANALYZER_CHECK(cs, CSharp)
+
+    // CSS
+    CREATE_ANALYZER_CHECK(css, Css)
+
+    // COBOL
+    CREATE_ANALYZER_CHECK(cbl, COBOL)
+    CREATE_ANALYZER_CHECK(cob, COBOL)
+
+    // D
+    CREATE_ANALYZER_CHECK(d, D)
+
+    // Dart
+    CREATE_ANALYZER_CHECK(dart, Dart)
+
+    // Erlang
+    CREATE_ANALYZER_CHECK(erl, Erlang)
+
+    // F#
+    CREATE_ANALYZER_CHECK(fs, FSharp)
+    CREATE_ANALYZER_CHECK(fsi, FSharp)
+    CREATE_ANALYZER_CHECK(fsx, FSharp)
+
+    // Fortran
+    CREATE_ANALYZER_CHECK(f, Fortran)
+    CREATE_ANALYZER_CHECK(for, Fortran)
+    CREATE_ANALYZER_CHECK(f90, Fortran)
+
+    // Go
+    CREATE_ANALYZER_CHECK(go, Go)
+
+    // Haskell
+    CREATE_ANALYZER_CHECK(hs, Haskell)
+
+    // HTML
+    CREATE_ANALYZER_CHECK(html, Html)
+    CREATE_ANALYZER_CHECK(htm, Html)
+
+    // Java
+    CREATE_ANALYZER_CHECK(java, Java)
+
+    // JavaScript
+    CREATE_ANALYZER_CHECK(js, JavaScript)
+
+    // JSON
+    CREATE_ANALYZER_CHECK(json, Json)
+
+    // Kotlin
+    CREATE_ANALYZER_CHECK(kt, Kotlin)
+    CREATE_ANALYZER_CHECK(kts, Kotlin)
+
+    // Less
+    CREATE_ANALYZER_CHECK(less, Less)
+
+    // Lisp
+    CREATE_ANALYZER_CHECK(lisp, Lisp)
+    CREATE_ANALYZER_CHECK(lsp, Lisp)
+    CREATE_ANALYZER_CHECK(cl, Lisp)
+
+    // Lua
+    CREATE_ANALYZER_CHECK(lua, Lua)
+
+    // MATLAB
+    // CREATE_ANALYZER_CHECK(m, MATLAB)
+
+    // Nim
+    CREATE_ANALYZER_CHECK(nim, Nim)
+
+    // Objective-C
+    CREATE_ANALYZER_CHECK(m, ObjectiveC)
+
+    // Pascal
+    CREATE_ANALYZER_CHECK(pas, Pascal)
+
+    // Perl
+    CREATE_ANALYZER_CHECK(pl, Perl)
+
+    // PHP
+    CREATE_ANALYZER_CHECK(php, PHP)
+
+    // Python
+    CREATE_ANALYZER_CHECK(py, Python)
+
+    // QML
+    CREATE_ANALYZER_CHECK(qml, QML)
+
+    // R
+    CREATE_ANALYZER_CHECK(r, R)
+
+    // Ruby
+    CREATE_ANALYZER_CHECK(rb, Ruby)
+
+    // Rust
+    CREATE_ANALYZER_CHECK(rs, Rust)
+
+    // Sass
+    CREATE_ANALYZER_CHECK(sass, Sass)
+    CREATE_ANALYZER_CHECK(scss, Sass)
+
+    // Scala
+    CREATE_ANALYZER_CHECK(scala, Scala)
+
+    // SQL
+    CREATE_ANALYZER_CHECK(sql, SQL)
+
+    // Swift
+    CREATE_ANALYZER_CHECK(swift, Swift)
+
+    // Tcl
+    CREATE_ANALYZER_CHECK(tcl, Tcl)
+
+    // TypeScript
+    CREATE_ANALYZER_CHECK(ts, TypeScript)
+
+    // VHDL
+    CREATE_ANALYZER_CHECK(vhd, VHDL)
+    CREATE_ANALYZER_CHECK(vhdl, VHDL)
+
+    // Visual Basic
+    CREATE_ANALYZER_CHECK(vb, VisualBasic)
+
+    // Vue
+    CREATE_ANALYZER_CHECK(vue, Vue)
+
+    // Wolfram
+    CREATE_ANALYZER_CHECK(wl, Wolfram)
+
+    // XML
+    CREATE_ANALYZER_CHECK(xml, XML)
+
+    // Yaml
+    CREATE_ANALYZER_CHECK(yaml, Yaml)
+    CREATE_ANALYZER_CHECK(yml, Yaml)
+
+    // Zig
+    CREATE_ANALYZER_CHECK(zig, Zig)
 
     return nullptr;
 }
