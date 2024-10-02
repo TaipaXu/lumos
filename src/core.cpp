@@ -6,6 +6,7 @@
 #include "./threadSafeQueue.hpp"
 #include "./magicWrapper.hpp"
 #include "analysis/analyzer.hpp"
+#include "utils/utils.hpp"
 
 void Core::start(const std::vector<std::string> &paths)
 {
@@ -89,7 +90,7 @@ void Core::start(const std::vector<std::string> &paths)
 
     auto endTime = std::chrono::high_resolution_clock::now();
     auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(endTime - startTime);
-    std::cout << "Function execution time: " << duration.count() << " milliseconds" << std::endl;
+    std::cout << "Function execution time: " << Utils::formatDuration(duration) << std::endl;
 
     std::cout << "Total lines: " << totalStats.totalLineCount << std::endl;
     std::cout << "Code lines: " << totalStats.codeLineCount << std::endl;

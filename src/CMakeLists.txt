@@ -25,6 +25,9 @@ set(SOURCES
     threadSafeQueue.hpp
     magicWrapper.hpp
     magicWrapper.cpp
+
+    utils/utils.hpp
+    utils/utils.cpp
 )
 add_executable(${TARGET} ${SOURCES})
 
