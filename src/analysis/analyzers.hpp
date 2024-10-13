@@ -14,8 +14,8 @@
 CREATE_ANALYZER(Ada, {"--"})
 CREATE_ANALYZER(Assembly, {";"})
 
-CREATE_ANALYZER(Bash, {"#"})   // TODO Multi-line comment
-CREATE_ANALYZER(Batch, {"::"}) // TODO Single-line comment REM
+CREATE_ANALYZER(Bash, {"#"}, {{": << 'EOF'", "EOF"}, {": << EOF", "EOF"}, {": '", "'"}, {": \"", "\""}, {"<<COMMENT", "COMMENT"}}) // TODO Multi-line comment
+CREATE_ANALYZER(Batch, std::vector<std::string>{"::"})
 
 CREATE_ANALYZER(Cpp, {"//"}, {{"/*", "*/"}})
 CREATE_ANALYZER(CSharp, {"//"}, {{"/*", "*/"}})
@@ -33,7 +33,7 @@ CREATE_ANALYZER(Fortran, {"!"})
 CREATE_ANALYZER(Go, {"//"}, {{"/*", "*/"}})
 
 CREATE_ANALYZER(Haskell, {"--"}, {{"{-", "-}"}})
-CREATE_ANALYZER(Html, {}, {{"<!--", "-->"}})
+CREATE_ANALYZER(Html, std::vector<MultiLineComment>{{"<!--", "-->"}})
 
 CREATE_ANALYZER(Java, {"//"}, {{"/*", "*/"}})
 CREATE_ANALYZER(JavaScript, {"//"}, {{"/*", "*/"}})
@@ -45,7 +45,7 @@ CREATE_ANALYZER(Less, {"//"}, {{"/*", "*/"}})
 CREATE_ANALYZER(Lisp, {";"}, {{"#|", "|#"}})
 CREATE_ANALYZER(Lua, {"--"}, {{"--[[", "]]"}})
 
-CREATE_ANALYZER(Markdown, {}, {{"<!--", "-->"}})
+CREATE_ANALYZER(Markdown, std::vector<MultiLineComment>{{"<!--", "-->"}})
 // CREATE_ANALYZER(MATLAB, {"%"}, {{"%{", "%}"}})
 
 CREATE_ANALYZER(Nim, {"#"}, {{"#[", "]#"}})
@@ -54,7 +54,7 @@ CREATE_ANALYZER(ObjectiveC, {"//"}, {{"/*", "*/"}})
 
 CREATE_ANALYZER(Pascal, {"//"}, {{"{", "}"}, {"(*", "*)"}})
 CREATE_ANALYZER(Perl, {"#"}, {{"=pod", "=cut"}})
-CREATE_ANALYZER(PHP, {"//"}, {{"/*", "*/"}}) // TODO Single-line comment #
+CREATE_ANALYZER(PHP, {"//", "#"}, {{"/*", "*/"}})
 CREATE_ANALYZER(Python, {"#"}, {{"'''", "'''"}, {R"(""")", R"(""")"}})
 
 CREATE_ANALYZER(QML, {"//"}, {{"/*", "*/"}})
@@ -72,13 +72,13 @@ CREATE_ANALYZER(Tcl, {"#"})
 CREATE_ANALYZER(TypeScript, {"//"}, {{"/*", "*/"}})
 
 CREATE_ANALYZER(VHDL, {"--"}, {{"/*", "*/"}})
-CREATE_ANALYZER(VisualBasic, {"'"}) // TODO Single-line comment REM
+CREATE_ANALYZER(VisualBasic, std::vector<std::string>{"'", "REM"})
 CREATE_ANALYZER(Vue, {"//"}, {{"/*", "*/"}})
 
-CREATE_ANALYZER(Wolfram, {""}, {{"(*", "*)"}}) // TODO only multi-line comment
+CREATE_ANALYZER(Wolfram, std::vector<MultiLineComment>{{"(*", "*)"}})
 
-CREATE_ANALYZER(XML, {}, {{"<!--", "-->"}})
+CREATE_ANALYZER(XML, std::vector<MultiLineComment>{{"<!--", "-->"}})
 
-CREATE_ANALYZER(Yaml, {"#"}, {})
+CREATE_ANALYZER(Yaml, {"#"})
 
 CREATE_ANALYZER(Zig, {"//"}, {{"/*", "*/"}})

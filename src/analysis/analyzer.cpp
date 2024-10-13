@@ -14,6 +14,21 @@
 Analyzer::Analyzer(const std::vector<std::string> &singleLineCommentSymbols, const std::vector<MultiLineComment> &multiLineCommentSymbols)
     : singleLineCommentSymbols{singleLineCommentSymbols},
       multiLineCommentSymbols{multiLineCommentSymbols},
+      hasSingleLineCommentSymbols{!singleLineCommentSymbols.empty()},
+      hasMultiLineCommentSymbols{!multiLineCommentSymbols.empty()}
+{
+}
+
+Analyzer::Analyzer(const std::vector<std::string> &singleLineCommentSymbols)
+    : singleLineCommentSymbols{singleLineCommentSymbols},
+      hasSingleLineCommentSymbols{!singleLineCommentSymbols.empty()},
+      hasMultiLineCommentSymbols{false}
+{
+}
+
+Analyzer::Analyzer(const std::vector<MultiLineComment> &multiLineCommentSymbols)
+    : multiLineCommentSymbols{multiLineCommentSymbols},
+      hasSingleLineCommentSymbols{false},
       hasMultiLineCommentSymbols{!multiLineCommentSymbols.empty()}
 {
 }
@@ -226,7 +241,7 @@ Model::CodeStats Analyzer::start(std::string &path) const
                 }
                 else
                 {
-                    if (isMulitLineCommentInOneLine(trimmed))
+                    if (isMultiLineCommentInOneLine(trimmed))
                     {
                         stats.commentLineCount++;
                     }
@@ -239,7 +254,7 @@ Model::CodeStats Analyzer::start(std::string &path) const
                         }
                         else
                         {
-                            if (isSingleLineComment(trimmed))
+                            if (hasSingleLineCommentSymbols && isSingleLineComment(trimmed))
                             {
                                 stats.commentLineCount++;
                             }
@@ -253,7 +268,7 @@ Model::CodeStats Analyzer::start(std::string &path) const
             }
             else
             {
-                if (isSingleLineComment(trimmed))
+                if (hasSingleLineCommentSymbols && isSingleLineComment(trimmed))
                 {
                     stats.commentLineCount++;
                 }
@@ -303,11 +318,13 @@ bool Analyzer::isMultiLineCommentEnd(const std::string &line, const std::string 
     return false;
 }
 
-bool Analyzer::isMulitLineCommentInOneLine(const std::string &line) const
+bool Analyzer::isMultiLineCommentInOneLine(const std::string &line) const
 {
-    for (const auto &symbol : multiLineCommentSymbols)
+    for (const MultiLineComment &symbol : multiLineCommentSymbols)
     {
-        if (line.find(symbol.start) != std::string::npos && line.find(symbol.end) != std::string::npos && line.find(symbol.start) < line.find(symbol.end))
+        size_t startPos = line.find(symbol.start);
+        size_t endPos = line.find(symbol.end, startPos + symbol.start.length());
+        if (startPos != std::string::npos && endPos != std::string::npos && startPos < endPos)
         {
             return true;
         }
