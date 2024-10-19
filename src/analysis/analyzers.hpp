@@ -2,14 +2,8 @@
 
 #include "./analyzer.hpp"
 
-#define CREATE_ANALYZER(name, ...)               \
-    class name##Analyzer : public Analyzer       \
-    {                                            \
-    public:                                      \
-        name##Analyzer() : Analyzer(__VA_ARGS__) \
-        {                                        \
-        }                                        \
-    };
+#define CREATE_ANALYZER(name, ...) \
+    Analyzer *name##Analyzer = new Analyzer(#name, __VA_ARGS__);
 
 CREATE_ANALYZER(Ada, {"--"})
 CREATE_ANALYZER(Assembly, {";"})
@@ -33,7 +27,7 @@ CREATE_ANALYZER(Fortran, {"!"})
 CREATE_ANALYZER(Go, {"//"}, {{"/*", "*/"}})
 
 CREATE_ANALYZER(Haskell, {"--"}, {{"{-", "-}"}})
-CREATE_ANALYZER(Html, std::vector<MultiLineComment>{{"<!--", "-->"}})
+CREATE_ANALYZER(Html, std::vector<Analyzer::MultiLineComment>{{"<!--", "-->"}})
 
 CREATE_ANALYZER(Java, {"//"}, {{"/*", "*/"}})
 CREATE_ANALYZER(JavaScript, {"//"}, {{"/*", "*/"}})
@@ -45,7 +39,7 @@ CREATE_ANALYZER(Less, {"//"}, {{"/*", "*/"}})
 CREATE_ANALYZER(Lisp, {";"}, {{"#|", "|#"}})
 CREATE_ANALYZER(Lua, {"--"}, {{"--[[", "]]"}})
 
-CREATE_ANALYZER(Markdown, std::vector<MultiLineComment>{{"<!--", "-->"}})
+CREATE_ANALYZER(Markdown, std::vector<Analyzer::MultiLineComment>{{"<!--", "-->"}})
 // CREATE_ANALYZER(MATLAB, {"%"}, {{"%{", "%}"}})
 
 CREATE_ANALYZER(Nim, {"#"}, {{"#[", "]#"}})
@@ -75,9 +69,9 @@ CREATE_ANALYZER(VHDL, {"--"}, {{"/*", "*/"}})
 CREATE_ANALYZER(VisualBasic, std::vector<std::string>{"'", "REM"})
 CREATE_ANALYZER(Vue, {"//"}, {{"/*", "*/"}})
 
-CREATE_ANALYZER(Wolfram, std::vector<MultiLineComment>{{"(*", "*)"}})
+CREATE_ANALYZER(Wolfram, std::vector<Analyzer::MultiLineComment>{{"(*", "*)"}})
 
-CREATE_ANALYZER(XML, std::vector<MultiLineComment>{{"<!--", "-->"}})
+CREATE_ANALYZER(XML, std::vector<Analyzer::MultiLineComment>{{"<!--", "-->"}})
 
 CREATE_ANALYZER(Yaml, {"#"})
 

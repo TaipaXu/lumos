@@ -14,17 +14,13 @@ public:
     };
 
 public:
-    Analyzer(const std::vector<std::string> &singleLineCommentSymbols, const std::vector<MultiLineComment> &multiLineCommentSymbols);
-    Analyzer(const std::vector<std::string> &singleLineCommentSymbols);
-    Analyzer(const std::vector<MultiLineComment> &multiLineCommentSymbols);
+    Analyzer(const std::string &title, const std::vector<std::string> &singleLineCommentSymbols, const std::vector<MultiLineComment> &multiLineCommentSymbols);
+    Analyzer(const std::string &title, const std::vector<std::string> &singleLineCommentSymbols);
+    Analyzer(const std::string &title, const std::vector<MultiLineComment> &multiLineCommentSymbols);
     ~Analyzer() = default;
     static Analyzer *create(const std::string &fileName);
 
     Model::CodeStats start(std::string &path) const;
-
-protected:
-    const std::vector<std::string> singleLineCommentSymbols;
-    const std::vector<MultiLineComment> multiLineCommentSymbols;
 
 private:
     bool isSingleLineComment(const std::string &line) const;
@@ -33,6 +29,9 @@ private:
     bool isMultiLineCommentInOneLine(const std::string &line) const;
 
 private:
+    const std::string title;
+    const std::vector<std::string> singleLineCommentSymbols;
+    const std::vector<MultiLineComment> multiLineCommentSymbols;
     const bool hasSingleLineCommentSymbols;
     const bool hasMultiLineCommentSymbols;
 };

@@ -1,9 +1,12 @@
 #pragma once
 
+#include <string>
+
 namespace Model
 {
     struct CodeStats
     {
+        std::string title;
         int totalLineCount = 0;
         int codeLineCount = 0;
         int commentLineCount = 0;

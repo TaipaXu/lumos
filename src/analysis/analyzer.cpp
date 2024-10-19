@@ -1,5 +1,4 @@
 #include "./analyzer.hpp"
-#include <iostream>
 #include <fstream>
 #include <algorithm>
 #include <boost/algorithm/string.hpp>
@@ -8,26 +7,29 @@
 #define CREATE_ANALYZER_CHECK(extension, analyzer) \
     if (fileName.ends_with("." #extension))        \
     {                                              \
-        return new analyzer##Analyzer();           \
+        return analyzer##Analyzer;                 \
     }
 
-Analyzer::Analyzer(const std::vector<std::string> &singleLineCommentSymbols, const std::vector<MultiLineComment> &multiLineCommentSymbols)
-    : singleLineCommentSymbols{singleLineCommentSymbols},
+Analyzer::Analyzer(const std::string &title, const std::vector<std::string> &singleLineCommentSymbols, const std::vector<MultiLineComment> &multiLineCommentSymbols)
+    : title{title},
+      singleLineCommentSymbols{singleLineCommentSymbols},
       multiLineCommentSymbols{multiLineCommentSymbols},
       hasSingleLineCommentSymbols{!singleLineCommentSymbols.empty()},
       hasMultiLineCommentSymbols{!multiLineCommentSymbols.empty()}
 {
 }
 
-Analyzer::Analyzer(const std::vector<std::string> &singleLineCommentSymbols)
-    : singleLineCommentSymbols{singleLineCommentSymbols},
+Analyzer::Analyzer(const std::string &title, const std::vector<std::string> &singleLineCommentSymbols)
+    : title{title},
+      singleLineCommentSymbols{singleLineCommentSymbols},
       hasSingleLineCommentSymbols{!singleLineCommentSymbols.empty()},
       hasMultiLineCommentSymbols{false}
 {
 }
 
-Analyzer::Analyzer(const std::vector<MultiLineComment> &multiLineCommentSymbols)
-    : multiLineCommentSymbols{multiLineCommentSymbols},
+Analyzer::Analyzer(const std::string &title, const std::vector<MultiLineComment> &multiLineCommentSymbols)
+    : title{title},
+      multiLineCommentSymbols{multiLineCommentSymbols},
       hasSingleLineCommentSymbols{false},
       hasMultiLineCommentSymbols{!multiLineCommentSymbols.empty()}
 {
@@ -212,6 +214,7 @@ Model::CodeStats Analyzer::start(std::string &path) const
 {
     std::ifstream file(path, std::ios::in);
     Model::CodeStats stats;
+    stats.title = title;
     std::string line;
     bool inBlockComment = false;
     std::string lastMultiLineCommentStart;

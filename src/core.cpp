@@ -1,5 +1,7 @@
 #include "./core.hpp"
 #include <iostream>
+#include <list>
+#include <unordered_map>
 #include <filesystem>
 #include <thread>
 #include <chrono>
@@ -47,7 +49,7 @@ void Core::start(const std::vector<std::string> &paths)
 
     ThreadSafeQueue<std::string> fileQueue;
     std::vector<std::thread> workers;
-    std::vector<Model::CodeStats> threadStats(threadCount);
+    std::vector<std::list<Model::CodeStats>> threadStats(threadCount);
 
     for (const auto &filePath : collectedPaths)
     {
@@ -60,54 +62,91 @@ void Core::start(const std::vector<std::string> &paths)
         workers.emplace_back([&fileQueue, &threadStats, i, this]() {
             while (true)
             {
-                auto optFilePath = fileQueue.pop();
-                if (!optFilePath)
+                std::optional<std::string> optionalFilePath = fileQueue.pop();
+                if (!optionalFilePath)
                 {
                     break;
                 }
 
-                std::string filePath = std::move(*optFilePath);
-
+                std::string filePath = std::move(*optionalFilePath);
                 if (!isBinaryFile(filePath))
                 {
-                    Model::CodeStats stats = processFile(filePath);
-                    threadStats[i] += stats;
+                    std::optional<Model::CodeStats> stats = processFile(filePath);
+                    if (stats)
+                    {
+                        threadStats[i].push_back(*stats);
+                    }
                 }
             }
         });
     }
-
     for (auto &worker : workers)
     {
         worker.join();
     }
 
-    Model::CodeStats totalStats;
-    for (const auto &stats : threadStats)
+    std::unordered_map<std::string, Model::CodeStats> mergedStatsMap;
+    for (const auto &threadList : threadStats)
     {
-        totalStats += stats;
+        for (const auto &stats : threadList)
+        {
+            auto it = mergedStatsMap.find(stats.title);
+            if (it != mergedStatsMap.end())
+            {
+                it->second += stats;
+            }
+            else
+            {
+                mergedStatsMap[stats.title] = stats;
+            }
+        }
+    }
+
+    std::vector<Model::CodeStats> mergedStats;
+    mergedStats.reserve(mergedStatsMap.size());
+    for (const auto &pair : mergedStatsMap)
+    {
+        mergedStats.push_back(pair.second);
     }
 
     auto endTime = std::chrono::high_resolution_clock::now();
     auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(endTime - startTime);
-    std::cout << "Function execution time: " << Utils::formatDuration(duration) << std::endl;
+    std::cout << "Time taken: " << Utils::formatDuration(duration) << std::endl;
 
-    std::cout << "Total lines: " << totalStats.totalLineCount << std::endl;
-    std::cout << "Code lines: " << totalStats.codeLineCount << std::endl;
-    std::cout << "Comment lines: " << totalStats.commentLineCount << std::endl;
-    std::cout << "Empty lines: " << totalStats.emptyLineCount << std::endl;
+    Model::CodeStats totalStats;
+    for (const auto &stats : mergedStats)
+    {
+        totalStats += stats;
+    }
+    std::cout << "Summary: " << std::endl
+              << "  Total lines: " << totalStats.totalLineCount << std::endl
+              << "  Code lines: " << totalStats.codeLineCount << std::endl
+              << "  Comment lines: " << totalStats.commentLineCount << std::endl
+              << "  Empty lines: " << totalStats.emptyLineCount << std::endl;
+
+    for (const auto &stats : mergedStats)
+    {
+        std::cout << "Language: " << stats.title << std::endl
+                  << "  Total Lines: " << stats.totalLineCount << std::endl
+                  << "  Code Lines: " << stats.codeLineCount << std::endl
+                  << "  Comment Lines: " << stats.commentLineCount << std::endl
+                  << "  Empty Lines: " << stats.emptyLineCount << std::endl;
+    }
 }
 
-Model::CodeStats Core::processFile(std::string path) const
+std::optional<Model::CodeStats> Core::processFile(std::string path) const
 {
     Analyzer *analyzer = Analyzer::create(path);
-    Model::CodeStats stats;
     if (analyzer)
     {
-        stats += analyzer->start(path);
-        delete analyzer;
+        Model::CodeStats stats;
+        stats = analyzer->start(path);
+        return stats;
     }
-    return stats;
+    else
+    {
+        return std::nullopt;
+    }
 }
 
 bool Core::isBinaryFile(const std::string &path) const
