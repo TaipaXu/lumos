@@ -8,6 +8,7 @@
 #include "./threadSafeQueue.hpp"
 #include "./magicWrapper.hpp"
 #include "analysis/analyzer.hpp"
+#include "printer/table.hpp"
 #include "utils/utils.hpp"
 
 void Core::start(const std::vector<std::string> &paths)
@@ -109,29 +110,32 @@ void Core::start(const std::vector<std::string> &paths)
         mergedStats.push_back(pair.second);
     }
 
-    auto endTime = std::chrono::high_resolution_clock::now();
-    auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(endTime - startTime);
-    std::cout << "Time taken: " << Utils::formatDuration(duration) << std::endl;
-
     Model::CodeStats totalStats;
     for (const auto &stats : mergedStats)
     {
         totalStats += stats;
     }
-    std::cout << "Summary: " << std::endl
-              << "  Total lines: " << totalStats.totalLineCount << std::endl
-              << "  Code lines: " << totalStats.codeLineCount << std::endl
-              << "  Comment lines: " << totalStats.commentLineCount << std::endl
-              << "  Empty lines: " << totalStats.emptyLineCount << std::endl;
 
+    auto endTime = std::chrono::high_resolution_clock::now();
+    auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(endTime - startTime);
+    std::cout << "Time taken: " << Utils::formatDuration(duration) << std::endl;
+
+    Printer::Table table;
+    table.setHeader({"Language", "Empty Lines", "Comment Lines", "Code Lines", "Total Lines"});
     for (const auto &stats : mergedStats)
     {
-        std::cout << "Language: " << stats.title << std::endl
-                  << "  Total Lines: " << stats.totalLineCount << std::endl
-                  << "  Code Lines: " << stats.codeLineCount << std::endl
-                  << "  Comment Lines: " << stats.commentLineCount << std::endl
-                  << "  Empty Lines: " << stats.emptyLineCount << std::endl;
+        table.addRow({stats.title,
+                      std::to_string(stats.emptyLineCount),
+                      std::to_string(stats.commentLineCount),
+                      std::to_string(stats.codeLineCount),
+                      std::to_string(stats.totalLineCount)});
     }
+    table.setSummary({"Summary",
+                      std::to_string(totalStats.emptyLineCount),
+                      std::to_string(totalStats.commentLineCount),
+                      std::to_string(totalStats.codeLineCount),
+                      std::to_string(totalStats.totalLineCount)});
+    table.print();
 }
 
 std::optional<Model::CodeStats> Core::processFile(std::string path) const

@@ -26,6 +26,9 @@ set(SOURCES
     magicWrapper.hpp
     magicWrapper.cpp
 
+    printer/table.hpp
+    printer/table.cpp
+
     utils/utils.hpp
     utils/utils.cpp
 )
