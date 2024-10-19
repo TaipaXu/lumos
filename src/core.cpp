@@ -140,7 +140,8 @@ void Core::start(const std::vector<std::string> &paths)
 
 std::optional<Model::CodeStats> Core::processFile(std::string path) const
 {
-    Analyzer *analyzer = Analyzer::create(path);
+    std::filesystem::path fsPath(path);
+    Analyzer *analyzer = Analyzer::create(fsPath.filename().string());
     if (analyzer)
     {
         Model::CodeStats stats;

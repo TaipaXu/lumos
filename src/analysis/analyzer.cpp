@@ -4,6 +4,12 @@
 #include <boost/algorithm/string.hpp>
 #include "./analyzers.hpp"
 
+#define CREATE_ANALYZER_CHECK_BY_NAME(name, analyzer) \
+    if (fileName == #name)                            \
+    {                                                 \
+        return analyzer##Analyzer;                    \
+    }
+
 #define CREATE_ANALYZER_CHECK(extension, analyzer) \
     if (fileName.ends_with("." #extension))        \
     {                                              \
@@ -69,6 +75,10 @@ Analyzer *Analyzer::create(const std::string &fileName)
     CREATE_ANALYZER_CHECK(txx, Cpp)
     CREATE_ANALYZER_CHECK(cppm, Cpp)
 
+    // CMake
+    CREATE_ANALYZER_CHECK_BY_NAME(CMakeLists.txt, CMake)
+    CREATE_ANALYZER_CHECK(cmake, CMake)
+
     // C#
     CREATE_ANALYZER_CHECK(cs, CSharp)
 
@@ -131,6 +141,9 @@ Analyzer *Analyzer::create(const std::string &fileName)
 
     // Lua
     CREATE_ANALYZER_CHECK(lua, Lua)
+
+    // Markdown
+    CREATE_ANALYZER_CHECK(md, Markdown)
 
     // MATLAB
     // CREATE_ANALYZER_CHECK(m, MATLAB)

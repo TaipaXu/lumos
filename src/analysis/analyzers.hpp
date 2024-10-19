@@ -12,6 +12,7 @@ CREATE_ANALYZER(Bash, {"#"}, {{": << 'EOF'", "EOF"}, {": << EOF", "EOF"}, {": '"
 CREATE_ANALYZER(Batch, std::vector<std::string>{"::"})
 
 CREATE_ANALYZER(Cpp, {"//"}, {{"/*", "*/"}})
+CREATE_ANALYZER(CMake, {"#"})
 CREATE_ANALYZER(CSharp, {"//"}, {{"/*", "*/"}})
 CREATE_ANALYZER(Css, {"//"}, {{"/*", "*/"}})
 CREATE_ANALYZER(COBOL, {"*"})
