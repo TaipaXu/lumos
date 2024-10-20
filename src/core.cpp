@@ -125,16 +125,16 @@ void Core::start(const std::vector<std::string> &paths)
     for (const auto &stats : mergedStats)
     {
         table.addRow({stats.title,
-                      std::to_string(stats.emptyLineCount),
-                      std::to_string(stats.commentLineCount),
-                      std::to_string(stats.codeLineCount),
-                      std::to_string(stats.totalLineCount)});
+                      {std::to_string(stats.emptyLineCount), Printer::Alignment::Right},
+                      {std::to_string(stats.commentLineCount), Printer::Alignment::Right},
+                      {std::to_string(stats.codeLineCount), Printer::Alignment::Right, Printer::Color::FgColor::Green},
+                      {std::to_string(stats.totalLineCount), Printer::Alignment::Right}});
     }
-    table.setSummary({"Summary",
-                      std::to_string(totalStats.emptyLineCount),
-                      std::to_string(totalStats.commentLineCount),
-                      std::to_string(totalStats.codeLineCount),
-                      std::to_string(totalStats.totalLineCount)});
+    table.setSummary({{"Summary"},
+                      {std::to_string(totalStats.emptyLineCount), Printer::Alignment::Right},
+                      {std::to_string(totalStats.commentLineCount), Printer::Alignment::Right},
+                      {std::to_string(totalStats.codeLineCount), Printer::Alignment::Right, Printer::Color::FgColor::Red},
+                      {std::to_string(totalStats.totalLineCount), Printer::Alignment::Right}});
     table.print();
 }
 
