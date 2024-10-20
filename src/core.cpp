@@ -167,7 +167,7 @@ bool Core::isBinaryFile(const std::string &path) const
             return false;
         }
 
-        bool isBinary = (std::string(mime_type).find("text") == std::string::npos);
+        bool isBinary = std::string(mime_type).find("text") == std::string::npos && std::string(mime_type).find("json") == std::string::npos;
 
         return isBinary;
     }
