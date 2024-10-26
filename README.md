@@ -9,6 +9,7 @@ English | [中文](./README_ZH.md)
 ## Compiling
 
 Before starting the compilation, please make sure you have installed [vcpkg](https://github.com/microsoft/vcpkg). Set the `VCPKG_ROOT` environment variable to point to the directory where `vcpkg` is installed. Add the `vcpkg` path to the system's `PATH` environment variable.
+Make sure you have installed [CMake](https://cmake.org) and `pkg-config`, `libtool`.
 
 ```sh
 git clone https://github.com/TaipaXu/lumos.git && cd lumos

@@ -1,18 +1,8 @@
 {
-    "builtin-baseline": "d07689ef165f033de5c0710e4f67c193a85373e1",
     "dependencies": [
         "boost-algorithm",
         "boost-iostreams",
         "boost-program-options",
-        {
-            "name": "libmagic",
-            "version>=": "5.40"
-        }
-    ],
-    "overrides": [
-        {
-            "name": "libmagic",
-            "version": "5.40#1"
-        }
+        "libmagic"
     ]
 }

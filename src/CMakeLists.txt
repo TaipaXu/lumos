@@ -1,4 +1,4 @@
-find_package(Boost REQUIRED COMPONENTS algorithm program_options)
+find_package(Boost REQUIRED COMPONENTS program_options)
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(LIBMAGIC REQUIRED libmagic)
 include_directories(${LIBMAGIC_INCLUDE_DIRS})
@@ -36,4 +36,4 @@ set(SOURCES
 )
 add_executable(${TARGET} ${SOURCES})
 
-target_link_libraries(${TARGET} PRIVATE Boost::algorithm Boost::program_options ${LIBMAGIC_LIBRARIES})
+target_link_libraries(${TARGET} PRIVATE Boost::program_options ${LIBMAGIC_LIBRARIES})

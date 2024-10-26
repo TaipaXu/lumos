@@ -8,6 +8,8 @@
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE": "Debug",
                 "CMAKE_CXX_FLAGS_RELEASE": "-Wall -Wextra",
+                "CMAKE_CXX_COMPILER": "/usr/bin/g++",
+                "CMAKE_MAKE_PROGRAM": "/usr/bin/make",
                 "CMAKE_TOOLCHAIN_FILE": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake"
             }
         },
@@ -18,7 +20,20 @@
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE": "Release",
                 "CMAKE_CXX_FLAGS_RELEASE": "-Wall -Wextra",
+                "CMAKE_CXX_COMPILER": "/usr/bin/g++",
+                "CMAKE_MAKE_PROGRAM": "/usr/bin/make",
                 "CMAKE_TOOLCHAIN_FILE": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake"
+            }
+        },
+        {
+            "name": "ppa-release",
+            "generator": "Unix Makefiles",
+            "binaryDir": "${sourceDir}/build/release",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Release",
+                "CMAKE_CXX_FLAGS_RELEASE": "-Wall -Wextra",
+                "CMAKE_CXX_COMPILER": "/usr/bin/g++",
+                "CMAKE_MAKE_PROGRAM": "/usr/bin/make"
             }
         }
     ]

@@ -110,3 +110,5 @@ dkms.conf
 .vscode
 !.vscode/launch.json
 build
+
+debian/files
