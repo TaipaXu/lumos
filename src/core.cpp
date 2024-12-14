@@ -91,14 +91,14 @@ void Core::start(const std::vector<std::string> &paths)
     {
         for (const auto &stats : threadList)
         {
-            auto it = mergedStatsMap.find(stats.title);
+            auto it = mergedStatsMap.find(stats.name);
             if (it != mergedStatsMap.end())
             {
                 it->second += stats;
             }
             else
             {
-                mergedStatsMap[stats.title] = stats;
+                mergedStatsMap[stats.name] = stats;
             }
         }
     }
@@ -124,7 +124,7 @@ void Core::start(const std::vector<std::string> &paths)
     table.setHeader({"Language", "Empty Lines", "Comment Lines", "Code Lines", "Total Lines"});
     for (const auto &stats : mergedStats)
     {
-        table.addRow({stats.title,
+        table.addRow({stats.name,
                       {std::to_string(stats.emptyLineCount), Printer::Alignment::Right},
                       {std::to_string(stats.commentLineCount), Printer::Alignment::Right},
                       {std::to_string(stats.codeLineCount), Printer::Alignment::Right, Printer::Color::FgColor::Green},

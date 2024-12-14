@@ -16,8 +16,8 @@
         return analyzer##Analyzer;                 \
     }
 
-Analyzer::Analyzer(const std::string &title, const std::vector<std::string> &singleLineCommentSymbols, const std::vector<MultiLineComment> &multiLineCommentSymbols)
-    : title{title},
+Analyzer::Analyzer(const std::string &name, const std::vector<std::string> &singleLineCommentSymbols, const std::vector<MultiLineComment> &multiLineCommentSymbols)
+    : name{name},
       singleLineCommentSymbols{singleLineCommentSymbols},
       multiLineCommentSymbols{multiLineCommentSymbols},
       hasSingleLineCommentSymbols{!singleLineCommentSymbols.empty()},
@@ -25,16 +25,16 @@ Analyzer::Analyzer(const std::string &title, const std::vector<std::string> &sin
 {
 }
 
-Analyzer::Analyzer(const std::string &title, const std::vector<std::string> &singleLineCommentSymbols)
-    : title{title},
+Analyzer::Analyzer(const std::string &name, const std::vector<std::string> &singleLineCommentSymbols)
+    : name{name},
       singleLineCommentSymbols{singleLineCommentSymbols},
       hasSingleLineCommentSymbols{!singleLineCommentSymbols.empty()},
       hasMultiLineCommentSymbols{false}
 {
 }
 
-Analyzer::Analyzer(const std::string &title, const std::vector<MultiLineComment> &multiLineCommentSymbols)
-    : title{title},
+Analyzer::Analyzer(const std::string &name, const std::vector<MultiLineComment> &multiLineCommentSymbols)
+    : name{name},
       multiLineCommentSymbols{multiLineCommentSymbols},
       hasSingleLineCommentSymbols{false},
       hasMultiLineCommentSymbols{!multiLineCommentSymbols.empty()}
@@ -86,8 +86,8 @@ Analyzer *Analyzer::create(const std::string &fileName)
     CREATE_ANALYZER_CHECK(css, Css)
 
     // COBOL
-    CREATE_ANALYZER_CHECK(cbl, COBOL)
-    CREATE_ANALYZER_CHECK(cob, COBOL)
+    CREATE_ANALYZER_CHECK(cbl, Cobol)
+    CREATE_ANALYZER_CHECK(cob, Cobol)
 
     // D
     CREATE_ANALYZER_CHECK(d, D)
@@ -161,13 +161,13 @@ Analyzer *Analyzer::create(const std::string &fileName)
     CREATE_ANALYZER_CHECK(pl, Perl)
 
     // PHP
-    CREATE_ANALYZER_CHECK(php, PHP)
+    CREATE_ANALYZER_CHECK(php, Php)
 
     // Python
     CREATE_ANALYZER_CHECK(py, Python)
 
     // QML
-    CREATE_ANALYZER_CHECK(qml, QML)
+    CREATE_ANALYZER_CHECK(qml, Qml)
 
     // R
     CREATE_ANALYZER_CHECK(r, R)
@@ -186,7 +186,7 @@ Analyzer *Analyzer::create(const std::string &fileName)
     CREATE_ANALYZER_CHECK(scala, Scala)
 
     // SQL
-    CREATE_ANALYZER_CHECK(sql, SQL)
+    CREATE_ANALYZER_CHECK(sql, Sql)
 
     // Swift
     CREATE_ANALYZER_CHECK(swift, Swift)
@@ -198,8 +198,8 @@ Analyzer *Analyzer::create(const std::string &fileName)
     CREATE_ANALYZER_CHECK(ts, TypeScript)
 
     // VHDL
-    CREATE_ANALYZER_CHECK(vhd, VHDL)
-    CREATE_ANALYZER_CHECK(vhdl, VHDL)
+    CREATE_ANALYZER_CHECK(vhd, Vhdl)
+    CREATE_ANALYZER_CHECK(vhdl, Vhdl)
 
     // Visual Basic
     CREATE_ANALYZER_CHECK(vb, VisualBasic)
@@ -211,7 +211,7 @@ Analyzer *Analyzer::create(const std::string &fileName)
     CREATE_ANALYZER_CHECK(wl, Wolfram)
 
     // XML
-    CREATE_ANALYZER_CHECK(xml, XML)
+    CREATE_ANALYZER_CHECK(xml, Xml)
 
     // Yaml
     CREATE_ANALYZER_CHECK(yaml, Yaml)
@@ -227,7 +227,7 @@ Model::CodeStats Analyzer::start(std::string &path) const
 {
     std::ifstream file(path, std::ios::in);
     Model::CodeStats stats;
-    stats.title = title;
+    stats.name = name;
     std::string line;
     bool inBlockComment = false;
     std::string lastMultiLineCommentStart;

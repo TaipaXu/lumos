@@ -14,9 +14,9 @@ public:
     };
 
 public:
-    Analyzer(const std::string &title, const std::vector<std::string> &singleLineCommentSymbols, const std::vector<MultiLineComment> &multiLineCommentSymbols);
-    Analyzer(const std::string &title, const std::vector<std::string> &singleLineCommentSymbols);
-    Analyzer(const std::string &title, const std::vector<MultiLineComment> &multiLineCommentSymbols);
+    Analyzer(const std::string &name, const std::vector<std::string> &singleLineCommentSymbols, const std::vector<MultiLineComment> &multiLineCommentSymbols);
+    Analyzer(const std::string &name, const std::vector<std::string> &singleLineCommentSymbols);
+    Analyzer(const std::string &name, const std::vector<MultiLineComment> &multiLineCommentSymbols);
     ~Analyzer() = default;
     static Analyzer *create(const std::string &fileName);
 
@@ -29,7 +29,7 @@ private:
     bool isMultiLineCommentInOneLine(const std::string &line) const;
 
 private:
-    const std::string title;
+    const std::string name;
     const std::vector<std::string> singleLineCommentSymbols;
     const std::vector<MultiLineComment> multiLineCommentSymbols;
     const bool hasSingleLineCommentSymbols;

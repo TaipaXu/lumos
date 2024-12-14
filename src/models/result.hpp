@@ -6,7 +6,7 @@ namespace Model
 {
     struct CodeStats
     {
-        std::string title;
+        std::string name;
         int totalLineCount = 0;
         int codeLineCount = 0;
         int commentLineCount = 0;
