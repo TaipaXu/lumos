@@ -18,8 +18,12 @@ set(SOURCES
 
     analysis/analyseManager.hpp
     analysis/analyseManager.cpp
+    analysis/iAnalyzer.hpp
+    analysis/iAnalyzer.cpp
     analysis/analyzer.hpp
     analysis/analyzer.cpp
+    analysis/multiLanguageAnalyzer.hpp
+    analysis/multiLanguageAnalyzer.cpp
     analysis/analyzers.hpp
 
     threadSafeQueue.hpp

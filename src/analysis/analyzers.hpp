@@ -1,12 +1,16 @@
 #pragma once
 
 #include "./analyzer.hpp"
+#include "./multiLanguageAnalyzer.hpp"
 
 #define CREATE_ANALYZER(name, ...) \
     Analyzer *name##Analyzer = new Analyzer(#name, __VA_ARGS__);
 
 #define CREATE_ANALYZER_WITH_DIFFERENT_NAME(className, languageName, ...) \
     Analyzer *className##Analyzer = new Analyzer(languageName, __VA_ARGS__);
+
+#define CREATE_MULTI_LANGUAGE_ANALYZER(name, ...) \
+    MultiLanguageAnalyzer *name##Analyzer = new MultiLanguageAnalyzer(#name, __VA_ARGS__);
 
 CREATE_ANALYZER(Ada, {"--"})
 CREATE_ANALYZER(Assembly, {";"})
@@ -31,7 +35,7 @@ CREATE_ANALYZER(Fortran, {"!"})
 CREATE_ANALYZER(Go, {"//"}, {{"/*", "*/"}})
 
 CREATE_ANALYZER(Haskell, {"--"}, {{"{-", "-}"}})
-CREATE_ANALYZER_WITH_DIFFERENT_NAME(Html, "HTML", std::vector<Analyzer::MultiLineComment>{{"<!--", "-->"}})
+CREATE_ANALYZER_WITH_DIFFERENT_NAME(HtmlTemplate, "HTML", std::vector<Analyzer::MultiLineComment>{{"<!--", "-->"}})
 
 CREATE_ANALYZER(Java, {"//"}, {{"/*", "*/"}})
 CREATE_ANALYZER(JavaScript, {"//"}, {{"/*", "*/"}})
@@ -71,7 +75,6 @@ CREATE_ANALYZER(TypeScript, {"//"}, {{"/*", "*/"}})
 
 CREATE_ANALYZER_WITH_DIFFERENT_NAME(Vhdl, "VHDL", {"--"}, {{"/*", "*/"}})
 CREATE_ANALYZER_WITH_DIFFERENT_NAME(VisualBasic, "Visual Basic", std::vector<std::string>{"'", "REM"})
-CREATE_ANALYZER(Vue, {"//"}, {{"/*", "*/"}})
 
 CREATE_ANALYZER(Wolfram, std::vector<Analyzer::MultiLineComment>{{"(*", "*)"}})
 
@@ -80,3 +83,15 @@ CREATE_ANALYZER_WITH_DIFFERENT_NAME(Xml, "XML", std::vector<Analyzer::MultiLineC
 CREATE_ANALYZER_WITH_DIFFERENT_NAME(Yaml, "YAML", {"#"})
 
 CREATE_ANALYZER(Zig, {"//"}, {{"/*", "*/"}})
+
+CREATE_MULTI_LANGUAGE_ANALYZER(Html, std::vector<MultiLanguageAnalyzer::LanguageBlock>{
+                                         {"<script", "</script>", JavaScriptAnalyzer},
+                                         {"<style", "</style>", CssAnalyzer},
+                                     },
+                               HtmlTemplateAnalyzer)
+
+CREATE_MULTI_LANGUAGE_ANALYZER(Vue, std::vector<MultiLanguageAnalyzer::LanguageBlock>{
+                                        {"<template>", "</template>", HtmlAnalyzer},
+                                        {"<script", "</script>", JavaScriptAnalyzer},
+                                        {"<style", "</style>", CssAnalyzer},
+                                    })

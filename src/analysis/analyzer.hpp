@@ -2,9 +2,10 @@
 
 #include <string>
 #include <vector>
+#include "./iAnalyzer.hpp"
 #include "models/result.hpp"
 
-class Analyzer
+class Analyzer : public IAnalyzer
 {
 public:
     struct MultiLineComment
@@ -18,18 +19,15 @@ public:
     Analyzer(const std::string &name, const std::vector<std::string> &singleLineCommentSymbols);
     Analyzer(const std::string &name, const std::vector<MultiLineComment> &multiLineCommentSymbols);
     ~Analyzer() = default;
-    static Analyzer *create(const std::string &fileName);
-
-    Model::CodeStats start(std::string &path) const;
 
 private:
+    Model::CodeStats analyzeStream(std::istream &in) const override;
     bool isSingleLineComment(const std::string &line) const;
     bool isMultiLineCommentStart(const std::string &line, std::string &multilineCommentStart) const;
     bool isMultiLineCommentEnd(const std::string &line, const std::string &multilineCommentStart) const;
     bool isMultiLineCommentInOneLine(const std::string &line) const;
 
 private:
-    const std::string name;
     const std::vector<std::string> singleLineCommentSymbols;
     const std::vector<MultiLineComment> multiLineCommentSymbols;
     const bool hasSingleLineCommentSymbols;
