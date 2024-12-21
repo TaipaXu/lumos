@@ -100,6 +100,8 @@ void Core::start(const std::vector<std::string> &paths)
             {
                 mergedStatsMap[stats.name] = stats;
             }
+
+            mergedStatsMap[stats.name].fileCount++;
         }
     }
 
@@ -114,6 +116,7 @@ void Core::start(const std::vector<std::string> &paths)
     for (const auto &stats : mergedStats)
     {
         totalStats += stats;
+        totalStats.fileCount += stats.fileCount;
     }
 
     auto endTime = std::chrono::high_resolution_clock::now();
@@ -121,16 +124,18 @@ void Core::start(const std::vector<std::string> &paths)
     std::cout << "Time taken: " << Utils::formatDuration(duration) << std::endl;
 
     Printer::Table table;
-    table.setHeader({"Language", "Empty Lines", "Comment Lines", "Code Lines", "Total Lines"});
+    table.setHeader({"Language", "Files", "Empty Lines", "Comment Lines", "Code Lines", "Total Lines"});
     for (const auto &stats : mergedStats)
     {
         table.addRow({stats.name,
+                      {std::to_string(stats.fileCount), Printer::Alignment::Right},
                       {std::to_string(stats.emptyLineCount), Printer::Alignment::Right},
                       {std::to_string(stats.commentLineCount), Printer::Alignment::Right},
                       {std::to_string(stats.codeLineCount), Printer::Alignment::Right, Printer::Color::FgColor::Green},
                       {std::to_string(stats.totalLineCount), Printer::Alignment::Right}});
     }
     table.setSummary({{"Summary"},
+                      {std::to_string(totalStats.fileCount), Printer::Alignment::Right},
                       {std::to_string(totalStats.emptyLineCount), Printer::Alignment::Right},
                       {std::to_string(totalStats.commentLineCount), Printer::Alignment::Right},
                       {std::to_string(totalStats.codeLineCount), Printer::Alignment::Right, Printer::Color::FgColor::Red},

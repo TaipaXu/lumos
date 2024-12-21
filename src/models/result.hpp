@@ -11,6 +11,7 @@ namespace Model
         int codeLineCount = 0;
         int commentLineCount = 0;
         int emptyLineCount = 0;
+        int fileCount = 0;
 
         CodeStats operator+(const CodeStats &other) const
         {
