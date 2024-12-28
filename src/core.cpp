@@ -111,6 +111,9 @@ void Core::start(const std::vector<std::string> &paths)
     {
         mergedStats.push_back(pair.second);
     }
+    std::sort(mergedStats.begin(), mergedStats.end(), [](const auto &a, const auto &b) {
+        return a.name < b.name;
+    });
 
     Model::CodeStats totalStats;
     for (const auto &stats : mergedStats)
