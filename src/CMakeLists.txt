@@ -38,6 +38,11 @@ set(SOURCES
     utils/utils.hpp
     utils/utils.cpp
 )
+
+if(ENABLE_TESTS)
+    add_library(lumosCore ${SOURCES})
+endif()
+
 add_executable(${TARGET} ${SOURCES})
 
 target_link_libraries(${TARGET} PRIVATE Boost::program_options ${LIBMAGIC_LIBRARIES})

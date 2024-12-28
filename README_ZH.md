@@ -18,6 +18,14 @@ cmake --preset=unix-release
 cmake --build build/release -j $(nproc)
 ```
 
-# 许可证
+## 测试
+
+```sh
+cmake --preset=unix-debug -DENABLE_TESTS=ON
+cmake --build build/debug -j $(nproc)
+cmake --build build/debug --target test
+```
+
+## 许可证
 
 [GPL-3.0](LICENSE)

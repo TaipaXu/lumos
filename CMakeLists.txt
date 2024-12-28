@@ -12,3 +12,9 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 add_subdirectory(src)
 add_subdirectory(package)
+
+option(ENABLE_TESTS "Enable building tests" OFF)
+if(ENABLE_TESTS)
+    enable_testing()
+    add_subdirectory(tests)
+endif()
