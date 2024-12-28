@@ -12,6 +12,9 @@
 #define CREATE_MULTI_LANGUAGE_ANALYZER(name, ...) \
     MultiLanguageAnalyzer *name##Analyzer = new MultiLanguageAnalyzer(#name, __VA_ARGS__);
 
+#define CREATE_MULTI_LANGUAGE_ANALYZER_WITH_DIFFERENT_NAME(className, languageName, ...) \
+    MultiLanguageAnalyzer *className##Analyzer = new MultiLanguageAnalyzer(languageName, __VA_ARGS__);
+
 CREATE_ANALYZER(Ada, {"--"})
 CREATE_ANALYZER(Assembly, {";"})
 
@@ -84,11 +87,11 @@ CREATE_ANALYZER_WITH_DIFFERENT_NAME(Yaml, "YAML", {"#"})
 
 CREATE_ANALYZER(Zig, {"//"}, {{"/*", "*/"}})
 
-CREATE_MULTI_LANGUAGE_ANALYZER(Html, std::vector<MultiLanguageAnalyzer::LanguageBlock>{
-                                         {"<script", "</script>", JavaScriptAnalyzer},
-                                         {"<style", "</style>", CssAnalyzer},
-                                     },
-                               HtmlTemplateAnalyzer)
+CREATE_MULTI_LANGUAGE_ANALYZER_WITH_DIFFERENT_NAME(Html, "HTML", std::vector<MultiLanguageAnalyzer::LanguageBlock>{
+                                                                     {"<script", "</script>", JavaScriptAnalyzer},
+                                                                     {"<style", "</style>", CssAnalyzer},
+                                                                 },
+                                                   HtmlTemplateAnalyzer)
 
 CREATE_MULTI_LANGUAGE_ANALYZER(Vue, std::vector<MultiLanguageAnalyzer::LanguageBlock>{
                                         {"<template>", "</template>", HtmlAnalyzer},
