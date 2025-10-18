@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <optional>
 #include "models/result.hpp"
 
 class IAnalyzer
@@ -10,7 +11,7 @@ public:
     virtual ~IAnalyzer() = default;
 
     static IAnalyzer *create(const std::string &fileName);
-    Model::CodeStats start(std::string &path) const;
+    std::optional<Model::CodeStats> start(const std::string &path) const;
     Model::CodeStats startFromContent(const std::string &content) const;
 
 protected:

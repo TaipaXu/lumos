@@ -171,9 +171,7 @@ std::optional<Model::CodeStats> Core::processFile(std::string path) const
     IAnalyzer *analyzer = IAnalyzer::create(fsPath.filename().string());
     if (analyzer)
     {
-        Model::CodeStats stats;
-        stats = analyzer->start(path);
-        return stats;
+        return analyzer->start(path);
     }
     else
     {

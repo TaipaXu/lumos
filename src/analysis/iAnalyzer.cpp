@@ -202,9 +202,14 @@ IAnalyzer *IAnalyzer::create(const std::string &fileName)
     return nullptr;
 }
 
-Model::CodeStats IAnalyzer::start(std::string &path) const
+std::optional<Model::CodeStats> IAnalyzer::start(const std::string &path) const
 {
     std::ifstream file(path, std::ios::in);
+    if (!file.is_open())
+    {
+        return std::nullopt;
+    }
+
     return analyzeStream(file);
 }
 

@@ -2,6 +2,7 @@
 
 #include <filesystem>
 #include <vector>
+#include <optional>
 #include <boost/test/included/unit_test.hpp>
 #include "analysis/analyzer.hpp"
 #include "models/result.hpp"
@@ -20,12 +21,13 @@ void test(std::vector<FileTestData> items)
         std::filesystem::path fsPath(item.filePath);
         IAnalyzer *analyzer = IAnalyzer::create(fsPath.filename().string());
         BOOST_CHECK(analyzer != nullptr);
-        Model::CodeStats stats = analyzer->start(item.filePath);
-        BOOST_CHECK_EQUAL(stats.name, item.expectedStats.name);
-        BOOST_CHECK_EQUAL(stats.totalLineCount, item.expectedStats.totalLineCount);
-        BOOST_CHECK_EQUAL(stats.codeLineCount, item.expectedStats.codeLineCount);
-        BOOST_CHECK_EQUAL(stats.commentLineCount, item.expectedStats.commentLineCount);
-        BOOST_CHECK_EQUAL(stats.emptyLineCount, item.expectedStats.emptyLineCount);
+        std::optional<Model::CodeStats> stats = analyzer->start(item.filePath);
+        BOOST_REQUIRE(stats.has_value());
+        BOOST_CHECK_EQUAL(stats->name, item.expectedStats.name);
+        BOOST_CHECK_EQUAL(stats->totalLineCount, item.expectedStats.totalLineCount);
+        BOOST_CHECK_EQUAL(stats->codeLineCount, item.expectedStats.codeLineCount);
+        BOOST_CHECK_EQUAL(stats->commentLineCount, item.expectedStats.commentLineCount);
+        BOOST_CHECK_EQUAL(stats->emptyLineCount, item.expectedStats.emptyLineCount);
     }
 }
 
