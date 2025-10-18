@@ -32,16 +32,16 @@ void test(std::vector<FileTestData> items)
 }
 
 std::vector<FileTestData> htmlItems = {
-    {"files/html/a.html", {.name = "Html", .totalLineCount = 14, .codeLineCount = 10, .commentLineCount = 0, .emptyLineCount = 4}},
-    {"files/html/b.html", {.name = "Html", .totalLineCount = 14, .codeLineCount = 9, .commentLineCount = 1, .emptyLineCount = 4}},
-    {"files/html/c.html", {.name = "Html", .totalLineCount = 15, .codeLineCount = 11, .commentLineCount = 0, .emptyLineCount = 4}},
-    {"files/html/d.html", {.name = "Html", .totalLineCount = 17, .codeLineCount = 12, .commentLineCount = 0, .emptyLineCount = 5}},
-    {"files/html/e.html", {.name = "Html", .totalLineCount = 19, .codeLineCount = 15, .commentLineCount = 0, .emptyLineCount = 4}},
-    {"files/html/f.html", {.name = "Html", .totalLineCount = 20, .codeLineCount = 15, .commentLineCount = 1, .emptyLineCount = 4}},
-    {"files/html/g.html", {.name = "Html", .totalLineCount = 20, .codeLineCount = 16, .commentLineCount = 1, .emptyLineCount = 3}},
-    {"files/html/h.html", {.name = "Html", .totalLineCount = 22, .codeLineCount = 17, .commentLineCount = 1, .emptyLineCount = 4}},
-    {"files/html/i.html", {.name = "Html", .totalLineCount = 22, .codeLineCount = 18, .commentLineCount = 1, .emptyLineCount = 3}},
-    {"files/html/j.html", {.name = "Html", .totalLineCount = 23, .codeLineCount = 18, .commentLineCount = 2, .emptyLineCount = 3}},
+    {"files/html/a.html", {.name = "HTML", .totalLineCount = 14, .codeLineCount = 10, .commentLineCount = 0, .emptyLineCount = 4}},
+    {"files/html/b.html", {.name = "HTML", .totalLineCount = 14, .codeLineCount = 9, .commentLineCount = 1, .emptyLineCount = 4}},
+    {"files/html/c.html", {.name = "HTML", .totalLineCount = 15, .codeLineCount = 11, .commentLineCount = 0, .emptyLineCount = 4}},
+    {"files/html/d.html", {.name = "HTML", .totalLineCount = 17, .codeLineCount = 12, .commentLineCount = 0, .emptyLineCount = 5}},
+    {"files/html/e.html", {.name = "HTML", .totalLineCount = 19, .codeLineCount = 15, .commentLineCount = 0, .emptyLineCount = 4}},
+    {"files/html/f.html", {.name = "HTML", .totalLineCount = 20, .codeLineCount = 15, .commentLineCount = 1, .emptyLineCount = 4}},
+    {"files/html/g.html", {.name = "HTML", .totalLineCount = 20, .codeLineCount = 16, .commentLineCount = 1, .emptyLineCount = 3}},
+    {"files/html/h.html", {.name = "HTML", .totalLineCount = 22, .codeLineCount = 17, .commentLineCount = 1, .emptyLineCount = 4}},
+    {"files/html/i.html", {.name = "HTML", .totalLineCount = 22, .codeLineCount = 18, .commentLineCount = 1, .emptyLineCount = 3}},
+    {"files/html/j.html", {.name = "HTML", .totalLineCount = 23, .codeLineCount = 18, .commentLineCount = 2, .emptyLineCount = 3}},
 };
 BOOST_AUTO_TEST_CASE(HTML)
 {
