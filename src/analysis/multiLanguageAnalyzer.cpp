@@ -25,7 +25,7 @@ Model::CodeStats MultiLanguageAnalyzer::analyzeStream(std::istream &in) const
 
         if (inLanguageBlock)
         {
-            if (line.ends_with(lastBlockLanguageEnd))
+            if (trimmed.ends_with(lastBlockLanguageEnd))
             {
                 if (defaultAnalyzer)
                 {
