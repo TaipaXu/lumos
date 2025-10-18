@@ -33,11 +33,19 @@ void Core::start(const std::vector<std::string> &paths)
         }
         else if (std::filesystem::is_directory(fsPath))
         {
-            for (const auto &entry : std::filesystem::recursive_directory_iterator(fsPath))
+            std::error_code errorCode;
+            for (std::filesystem::recursive_directory_iterator it(fsPath, std::filesystem::directory_options::skip_permission_denied, errorCode), end; it != end; it.increment(errorCode))
             {
-                if (std::filesystem::is_regular_file(entry.path()))
+                if (errorCode)
                 {
-                    collectedPaths.push_back(entry.path().string());
+                    errorCode.clear();
+                    continue;
+                }
+
+                const auto &entryPath = it->path();
+                if (std::filesystem::is_regular_file(entryPath))
+                {
+                    collectedPaths.push_back(entryPath.string());
                 }
             }
         }
