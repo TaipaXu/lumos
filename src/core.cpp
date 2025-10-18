@@ -47,7 +47,16 @@ void Core::start(const std::vector<std::string> &paths)
     unsigned int threadCount = std::thread::hardware_concurrency();
     if (threadCount == 0)
     {
-        threadCount = 4;
+        threadCount = 2;
+    }
+
+    if (collectedPaths.empty())
+    {
+        threadCount = 1;
+    }
+    else
+    {
+        threadCount = std::min<unsigned int>(threadCount, collectedPaths.size());
     }
 
     ThreadSafeQueue<std::string> fileQueue;
