@@ -1,10 +1,12 @@
 #include "./core.hpp"
 #include <iostream>
+#include <array>
 #include <list>
 #include <unordered_map>
 #include <filesystem>
 #include <thread>
 #include <chrono>
+#include <algorithm>
 #include "./threadSafeQueue.hpp"
 #include "./magicWrapper.hpp"
 #include "analysis/analyzer.hpp"
@@ -168,16 +170,20 @@ bool Core::isBinaryFile(const std::string &path) const
     {
         thread_local MagicWrapper magicWrapper;
 
-        const char *mime_type = magic_file(magicWrapper.getMagicCookie(), path.c_str());
-        if (mime_type == nullptr)
+        const char *mimeType = magic_file(magicWrapper.getMagicCookie(), path.c_str());
+        if (mimeType == nullptr)
         {
             std::cerr << "Cannot determine MIME type: " << magic_error(magicWrapper.getMagicCookie()) << std::endl;
             return false;
         }
 
-        bool isBinary = std::string(mime_type).find("text") == std::string::npos && std::string(mime_type).find("json") == std::string::npos && std::string(mime_type).find("javascript") == std::string::npos;
+        const std::string mime(mimeType);
+        static const std::array<const char *, 3> textIndicators{"text", "json", "javascript"};
+        const bool isTextual = std::any_of(textIndicators.begin(), textIndicators.end(), [&](const char *indicator) {
+            return mime.find(indicator) != std::string::npos;
+        });
 
-        return isBinary;
+        return !isTextual;
     }
     catch (const std::exception &e)
     {
