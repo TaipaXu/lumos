@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <string_view>
 #include <vector>
 #include "./iAnalyzer.hpp"
 #include "models/result.hpp"
@@ -22,10 +23,10 @@ public:
 
 private:
     Model::CodeStats analyzeStream(std::istream &in) const override;
-    bool isSingleLineComment(const std::string &line) const;
-    bool isMultiLineCommentStart(const std::string &line, std::string &multilineCommentStart) const;
-    bool isMultiLineCommentEnd(const std::string &line, const std::string &multilineCommentStart) const;
-    bool isMultiLineCommentInOneLine(const std::string &line) const;
+    bool isSingleLineComment(std::string_view line) const;
+    bool isMultiLineCommentStart(std::string_view line, std::string &multilineCommentStart) const;
+    bool isMultiLineCommentEnd(std::string_view line, std::string_view multilineCommentStart) const;
+    bool isMultiLineCommentInOneLine(std::string_view line) const;
 
 private:
     const std::vector<std::string> singleLineCommentSymbols;

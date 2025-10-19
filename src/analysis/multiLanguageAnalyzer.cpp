@@ -1,7 +1,7 @@
 #include "./multiLanguageAnalyzer.hpp"
-#include <fstream>
+#include <string_view>
 #include <algorithm>
-#include <boost/algorithm/string.hpp>
+#include "utils/utils.hpp"
 
 MultiLanguageAnalyzer::MultiLanguageAnalyzer(const std::string &name, const std::vector<MultiLanguageAnalyzer::LanguageBlock> &languageBlocks, IAnalyzer *defaultAnalyzer)
     : IAnalyzer{name}, languageBlocks{languageBlocks}, defaultAnalyzer{defaultAnalyzer}
@@ -21,7 +21,7 @@ Model::CodeStats MultiLanguageAnalyzer::analyzeStream(std::istream &in) const
     std::string line;
     while (std::getline(in, line))
     {
-        std::string trimmed = boost::algorithm::trim_copy(line);
+        std::string_view trimmed = Utils::trimView(line);
 
         if (inLanguageBlock)
         {

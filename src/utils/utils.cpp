@@ -4,6 +4,26 @@
 
 namespace Utils
 {
+    std::string_view trimView(std::string_view view)
+    {
+        const auto isSpace = [](unsigned char ch) { return std::isspace(ch) != 0; };
+
+        size_t start = 0;
+        size_t end = view.size();
+
+        while (start < end && isSpace(static_cast<unsigned char>(view[start])))
+        {
+            ++start;
+        }
+
+        while (end > start && isSpace(static_cast<unsigned char>(view[end - 1])))
+        {
+            --end;
+        }
+
+        return view.substr(start, end - start);
+    }
+
     std::string formatDuration(std::chrono::milliseconds duration)
     {
         using namespace std::chrono;

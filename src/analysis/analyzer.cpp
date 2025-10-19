@@ -1,7 +1,6 @@
 #include "./analyzer.hpp"
-#include <fstream>
 #include <algorithm>
-#include <boost/algorithm/string.hpp>
+#include "utils/utils.hpp"
 
 Analyzer::Analyzer(const std::string &name, const std::vector<std::string> &singleLineCommentSymbols, const std::vector<MultiLineComment> &multiLineCommentSymbols)
     : IAnalyzer{name},
@@ -39,7 +38,7 @@ Model::CodeStats Analyzer::analyzeStream(std::istream &in) const
     while (std::getline(in, line))
     {
         stats.totalLineCount++;
-        std::string trimmed = boost::algorithm::trim_copy(line);
+        std::string_view trimmed = Utils::trimView(line);
 
         if (trimmed.empty())
         {
@@ -103,7 +102,7 @@ Model::CodeStats Analyzer::analyzeStream(std::istream &in) const
     return stats;
 }
 
-bool Analyzer::isSingleLineComment(const std::string &line) const
+bool Analyzer::isSingleLineComment(std::string_view line) const
 {
     for (const auto &symbol : singleLineCommentSymbols)
     {
@@ -115,7 +114,7 @@ bool Analyzer::isSingleLineComment(const std::string &line) const
     return false;
 }
 
-bool Analyzer::isMultiLineCommentStart(const std::string &line, std::string &multilineCommentStart) const
+bool Analyzer::isMultiLineCommentStart(std::string_view line, std::string &multilineCommentStart) const
 {
     for (const auto &symbol : multiLineCommentSymbols)
     {
@@ -128,7 +127,7 @@ bool Analyzer::isMultiLineCommentStart(const std::string &line, std::string &mul
     return false;
 }
 
-bool Analyzer::isMultiLineCommentEnd(const std::string &line, const std::string &multilineCommentStart) const
+bool Analyzer::isMultiLineCommentEnd(std::string_view line, std::string_view multilineCommentStart) const
 {
     auto it = std::find_if(multiLineCommentSymbols.begin(), multiLineCommentSymbols.end(), [&](const MultiLineComment &symbol) { return symbol.start == multilineCommentStart; });
     if (it != multiLineCommentSymbols.end())
@@ -138,7 +137,7 @@ bool Analyzer::isMultiLineCommentEnd(const std::string &line, const std::string 
     return false;
 }
 
-bool Analyzer::isMultiLineCommentInOneLine(const std::string &line) const
+bool Analyzer::isMultiLineCommentInOneLine(std::string_view line) const
 {
     for (const MultiLineComment &symbol : multiLineCommentSymbols)
     {
