@@ -17,65 +17,18 @@ void Core::start(const std::vector<std::string> &paths)
 {
     auto startTime = std::chrono::high_resolution_clock::now();
 
-    std::vector<std::string> collectedPaths;
-    for (const auto &path : paths)
-    {
-        std::filesystem::path fsPath(path);
-
-        if (!std::filesystem::exists(fsPath))
-        {
-            continue;
-        }
-
-        if (std::filesystem::is_regular_file(fsPath))
-        {
-            collectedPaths.push_back(path);
-        }
-        else if (std::filesystem::is_directory(fsPath))
-        {
-            std::error_code errorCode;
-            for (std::filesystem::recursive_directory_iterator it(fsPath, std::filesystem::directory_options::skip_permission_denied, errorCode), end; it != end; it.increment(errorCode))
-            {
-                if (errorCode)
-                {
-                    errorCode.clear();
-                    continue;
-                }
-
-                const auto &entryPath = it->path();
-                if (std::filesystem::is_regular_file(entryPath))
-                {
-                    collectedPaths.push_back(entryPath.string());
-                }
-            }
-        }
-    }
-    std::cout << "Total files found: " << collectedPaths.size() << std::endl;
+    ThreadSafeQueue<std::string> fileQueue;
+    std::size_t totalFiles = 0;
 
     unsigned int threadCount = std::thread::hardware_concurrency();
     if (threadCount == 0)
     {
         threadCount = 2;
     }
+    threadCount = std::max(1u, threadCount);
 
-    if (collectedPaths.empty())
-    {
-        threadCount = 1;
-    }
-    else
-    {
-        threadCount = std::min<unsigned int>(threadCount, collectedPaths.size());
-    }
-
-    ThreadSafeQueue<std::string> fileQueue;
     std::vector<std::thread> workers;
     std::vector<std::list<Model::CodeStats>> threadStats(threadCount);
-
-    for (const auto &filePath : collectedPaths)
-    {
-        fileQueue.push(filePath);
-    }
-    fileQueue.close();
 
     for (unsigned int i = 0; i < threadCount; ++i)
     {
@@ -100,6 +53,45 @@ void Core::start(const std::vector<std::string> &paths)
             }
         });
     }
+
+    for (const auto &path : paths)
+    {
+        std::filesystem::path fsPath(path);
+
+        if (!std::filesystem::exists(fsPath))
+        {
+            continue;
+        }
+
+        if (std::filesystem::is_regular_file(fsPath))
+        {
+            fileQueue.push(fsPath.string());
+            ++totalFiles;
+        }
+        else if (std::filesystem::is_directory(fsPath))
+        {
+            std::error_code errorCode;
+            for (std::filesystem::recursive_directory_iterator it(fsPath, std::filesystem::directory_options::skip_permission_denied, errorCode), end; it != end; it.increment(errorCode))
+            {
+                if (errorCode)
+                {
+                    errorCode.clear();
+                    continue;
+                }
+
+                const auto &entryPath = it->path();
+                if (std::filesystem::is_regular_file(entryPath))
+                {
+                    fileQueue.push(entryPath.string());
+                    ++totalFiles;
+                }
+            }
+        }
+    }
+    fileQueue.close();
+
+    std::cout << "Total files found: " << totalFiles << std::endl;
+
     for (auto &worker : workers)
     {
         worker.join();
