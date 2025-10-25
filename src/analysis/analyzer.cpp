@@ -1,4 +1,5 @@
 #include "./analyzer.hpp"
+#include <fstream>
 #include <algorithm>
 #include "utils/utils.hpp"
 

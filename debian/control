@@ -2,8 +2,8 @@ Source: lumos
 Section: utils
 Priority: optional
 Maintainer: Taipa Xu <taipaxu@gmail.com>
-Build-Depends: debhelper-compat (= 13), cmake, make, g++, pkg-config, libtool, libboost-all-dev, libmagic-dev
-Standards-Version: 4.6.0
+Build-Depends: debhelper-compat (= 13), cmake, pkg-config, libboost-program-options-dev, libmagic-dev
+Standards-Version: 4.7.0
 Homepage: https://github.com/taipaxu/lumos
 Vcs-Browser: https://github.com/taipaxu/lumos
 Vcs-Git: https://github.com/taipaxu/lumos.git
@@ -11,5 +11,5 @@ Rules-Requires-Root: no
 
 Package: lumos
 Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}, libboost-program-options1.74.0 (>= 1.74.0)
+Depends: ${shlibs:Depends}, ${misc:Depends}
 Description: Code statistics tool, convenient and fast!
