@@ -1,5 +1,5 @@
 # Changelog
 
-## 0.0.1 - 2025-10-25
+## 0.0.1 - 2025-10-31
 
 - Lumos Code statistics tool, convenient and fast!
