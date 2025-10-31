@@ -17,7 +17,6 @@ if(UNIX AND NOT APPLE)
     set(CPACK_DEBIAN_PACKAGE_PRIORITY "optional")
     set(CPACK_DEBIAN_PACKAGE_SECTION "utils")
     set(CPACK_DEBIAN_PACKAGE_SHLIBDEPS ON)
-    set(CPACK_DEBIAN_PACKAGE_DEPENDS "libboost-program-options1.74.0 (>= 1.74.0), libmagic1")
 
     install(TARGETS lumos
         RUNTIME DESTINATION bin
