@@ -6,15 +6,25 @@
 
 ![lumos](./lumos.gif)
 
-## 依赖
-
-在开始编译之前，请确保你已经安装了[vcpkg](https://github.com/microsoft/vcpkg)。设置`VCPKG_ROOT`环境变量，将其指向`vcpkg`的安装目录。将`vcpkg`的路径添加到系统的`PATH`环境变量中。
+## 安装
 
 ### Ubuntu
 
-确保你已经安装了[CMake](https://cmake.org)与`build-essential`，`pkg-config`，`libtool`。
+```sh
+sudo add-apt-repository ppa:taipa-xu/stable
+sudo apt update
+sudo apt install lumos
+```
 
 ## 编译
+
+### 依赖
+
+在开始编译之前，请确保你已经安装了[vcpkg](https://github.com/microsoft/vcpkg)。设置`VCPKG_ROOT`环境变量，将其指向`vcpkg`的安装目录。将`vcpkg`的路径添加到系统的`PATH`环境变量中。
+
+#### Ubuntu
+
+确保你已经安装了[CMake](https://cmake.org)与`build-essential`，`pkg-config`，`libtool`。
 
 ### Linux & macOS
 
