@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+    <Fragment>
+        <DirectoryRef Id="INSTALL_ROOT">
+            <Component Id="CMP_LumosPathEnv" Guid="9B5F9E38-7A8B-4374-94E0-675985CDCF76">
+                <CreateFolder />
+                <RegistryValue Root="HKLM" Key="Software\lumos" Name="InstallDir" Type="string" Value="[INSTALL_ROOT]" KeyPath="yes" />
+                <Environment Id="LumOSPath" Name="PATH" Action="set" Part="last" System="yes" Permanent="no" Value="[INSTALL_ROOT]" />
+            </Component>
+        </DirectoryRef>
+    </Fragment>
+</Wix>

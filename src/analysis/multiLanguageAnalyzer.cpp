@@ -1,6 +1,6 @@
 #include "./multiLanguageAnalyzer.hpp"
 #include <string_view>
-#include <fstream>
+#include <iostream>
 #include <algorithm>
 #include "utils/utils.hpp"
 

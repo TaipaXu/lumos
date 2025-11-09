@@ -1,5 +1,6 @@
 {
     "dependencies": [
+        "pkgconf",
         "boost-algorithm",
         "boost-iostreams",
         "boost-program-options",
