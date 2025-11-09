@@ -1,5 +1,10 @@
 #include "./color.hpp"
 #include <sstream>
+#include <mutex>
+#ifdef _WIN32
+#define NOMINMAX
+#include <windows.h>
+#endif
 
 namespace Printer
 {
@@ -31,6 +36,27 @@ namespace Printer
 
     std::string Color::color(const std::string &str, const FgColor &fgColor, const BgColor &bgColor)
     {
+#ifdef _WIN32
+        static std::once_flag enableAnsiFlag;
+        std::call_once(enableAnsiFlag, []() {
+            HANDLE handle = GetStdHandle(STD_OUTPUT_HANDLE);
+            if (handle == INVALID_HANDLE_VALUE)
+            {
+                return;
+            }
+
+            DWORD mode = 0;
+            if (!GetConsoleMode(handle, &mode))
+            {
+                return;
+            }
+
+            if ((mode & ENABLE_VIRTUAL_TERMINAL_PROCESSING) == 0)
+            {
+                SetConsoleMode(handle, mode | ENABLE_VIRTUAL_TERMINAL_PROCESSING);
+            }
+        });
+#endif
         std::ostringstream result;
         result << FG_COLORS.at(fgColor) << BG_COLORS.at(bgColor) << str << COLOR_CLOSE;
         return result.str();
