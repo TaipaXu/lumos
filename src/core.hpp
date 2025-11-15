@@ -3,6 +3,7 @@
 #include <string>
 #include <vector>
 #include <optional>
+#include <filesystem>
 #include "models/result.hpp"
 
 class Core
@@ -15,5 +16,7 @@ public:
 
 private:
     std::optional<Model::CodeStats> processFile(std::string path) const;
-    bool isBinaryFile(const std::string &path) const;
+    static bool isBinaryFile(const std::string &path);
+    static bool isKnownTextExtension(const std::filesystem::path &path);
+    static bool looksTextualFile(const std::filesystem::path &path);
 };

@@ -3,10 +3,13 @@
 #include <array>
 #include <list>
 #include <unordered_map>
+#include <unordered_set>
 #include <filesystem>
+#include <fstream>
 #include <thread>
 #include <chrono>
 #include <algorithm>
+#include <cctype>
 #include "./threadSafeQueue.hpp"
 #include "./magicWrapper.hpp"
 #include "analysis/analyzer.hpp"
@@ -42,7 +45,7 @@ void Core::start(const std::vector<std::string> &paths)
                 }
 
                 std::string filePath = std::move(*optionalFilePath);
-                if (!isBinaryFile(filePath))
+                if (!Core::isBinaryFile(filePath))
                 {
                     std::optional<Model::CodeStats> stats = processFile(filePath);
                     if (stats)
@@ -171,10 +174,19 @@ std::optional<Model::CodeStats> Core::processFile(std::string path) const
     }
 }
 
-bool Core::isBinaryFile(const std::string &path) const
+bool Core::isBinaryFile(const std::string &path)
 {
     try
     {
+        const std::filesystem::path fsPath(path);
+        if (isKnownTextExtension(fsPath))
+        {
+            if (looksTextualFile(fsPath))
+            {
+                return false;
+            }
+        }
+
         thread_local MagicWrapper magicWrapper;
 
         const char *mimeType = magic_file(magicWrapper.getMagicCookie(), path.c_str());
@@ -197,4 +209,67 @@ bool Core::isBinaryFile(const std::string &path) const
         std::cerr << "Error: " << e.what() << std::endl;
         return false;
     }
+}
+
+bool Core::isKnownTextExtension(const std::filesystem::path &path)
+{
+    // Keep list in sync with IAnalyzer::create() extension checks.
+    static const std::unordered_set<std::string> textualExtensions = {
+        ".adb", ".ads", ".asm", ".bat", ".c", ".c++", ".cbl", ".cc", ".cl", ".cmake", ".cmd", ".cob",
+        ".cpp", ".cppm", ".cs", ".css", ".cxx", ".d", ".dart", ".erl", ".f", ".f90", ".for",
+        ".fs", ".fsi", ".fsx", ".go", ".h", ".hh", ".hpp", ".hs", ".htm", ".html", ".hxx",
+        ".inl", ".ipp", ".java", ".js", ".json", ".kt", ".kts", ".less", ".lisp", ".lsp",
+        ".lua", ".m", ".md", ".nim", ".pas", ".php", ".pl", ".py", ".qml", ".r", ".rb",
+        ".rs", ".s", ".sass", ".scala", ".scss", ".sh", ".sql", ".swift", ".tcl", ".tpp",
+        ".ts", ".txx", ".vb", ".vhd", ".vhdl", ".vue", ".wl", ".xml", ".yaml", ".yml", ".zig"};
+
+    std::string ext = path.extension().string();
+    if (ext.empty())
+    {
+        const std::string filename = path.filename().string();
+        return filename == "CMakeLists.txt" || filename == "Dockerfile";
+    }
+
+    std::transform(ext.begin(), ext.end(), ext.begin(), [](unsigned char ch) {
+        return static_cast<char>(std::tolower(ch));
+    });
+
+    return textualExtensions.find(ext) != textualExtensions.end();
+}
+
+bool Core::looksTextualFile(const std::filesystem::path &path)
+{
+    constexpr std::size_t sniffSize = 4096;
+    thread_local std::array<char, sniffSize> sniffBuffer{};
+
+    std::ifstream file(path, std::ios::binary);
+    if (!file.is_open())
+    {
+        return false;
+    }
+
+    file.read(sniffBuffer.data(), sniffSize);
+    const std::streamsize bytesRead = file.gcount();
+    if (bytesRead == 0)
+    {
+        return true;
+    }
+
+    int suspiciousCount = 0;
+    for (std::streamsize i = 0; i < bytesRead; ++i)
+    {
+        const unsigned char ch = static_cast<unsigned char>(sniffBuffer[static_cast<std::size_t>(i)]);
+        if (ch == 0)
+        {
+            return false;
+        }
+
+        const bool isControl = (ch < 0x07) || (ch > 0x0D && ch < 0x20 && ch != 0x1B);
+        if (isControl)
+        {
+            ++suspiciousCount;
+        }
+    }
+
+    return suspiciousCount * 100 < static_cast<int>(bytesRead) * 5;
 }
